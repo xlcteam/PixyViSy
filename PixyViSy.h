@@ -1,5 +1,5 @@
-#ifndef _pixyvisy
-  #define _pixyvisy
+#ifndef _PIXYVISY_H
+  #define _PIXYVISY_H
   
   #include <SPI.h>  
   #include <Pixy.h>
