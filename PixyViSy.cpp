@@ -17,7 +17,7 @@ void PixyViSy::update(void)
   right_pixels = 0;
   action = 'N';
   distance = ~0;
-  float goal_pix_height = 0.0;
+  uint16_t goal_pix_height = 0;
   if (all_blocks_count) {
     for (uint8_t i = 0; i < blocks_count; i++) {
       if (pixy.blocks[i].signature == signature) {
@@ -37,9 +37,8 @@ void PixyViSy::update(void)
       }
     }
     if (blocks_count) {
-      goal_pix_height /= blocks_count;
-      distance = calib_const / goal_pix_height;
-      uint8_t kicked_ball_size = goal_pix_height * 10 / goal_height;
+      distance = calib_const * blocks_count / goal_pix_height;
+      uint8_t kicked_ball_size = goal_pix_height * 10 / (goal_height * blocks_count);
       for (uint8_t i = 0; i < blocks_count; i++) {
         if (pixy.blocks[i].signature == signature) {
           uint16_t finish = pixy.blocks[i].x + pixy.blocks[i].width / 2;
