@@ -19,7 +19,7 @@ void PixyViSy::update(void)
   distance = ~0;
   uint16_t goal_pix_height = 0;
   if (all_blocks_count) {
-    for (uint8_t i = 0; i < blocks_count; i++) {
+    for (uint8_t i = 0; i < all_blocks_count; i++) {
       if (pixy.blocks[i].signature == signature) {
         blocks_count++;
         goal_pix_height += pixy.blocks[i].height;

@@ -8,6 +8,8 @@
 PixyViSy pixyViSy(SIG, 24*100, 10);
 uint16_t distance;
 char action;
+uint32_t time, loop_count = 0;
+uint16_t min_time = ~0, max_time = 0, average_time = 0;
 
 void setup()
 {
@@ -15,7 +17,23 @@ void setup()
 }
 void loop()
 {
+  time = (uint32_t)micros();
   pixyViSy.update();
+  time = (uint32_t)micros() - time;
+  if (time < min_time) {
+    min_time = time;
+  } else if (time > max_time) {
+    max_time = time;
+  }
+  average_time = (average_time * loop_count + time) / (loop_count + 1);
+  loop_count++;
+  Serial.print("Average time: ");
+  Serial.print(average_time);
+  Serial.print(" Min time: ");
+  Serial.print(min_time);
+  Serial.print(" Max time: ");
+  Serial.println(max_time);
+  
   distance = pixyViSy.getDistance();
   action = pixyViSy.getAction();
   if (distance == ~0) {
@@ -46,5 +64,6 @@ void loop()
       }
     }
   }
+  Serial.println();
   delay(100);
 }
