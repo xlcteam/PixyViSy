@@ -5,6 +5,9 @@
 #include <Pixy.h>
 #include <stdint.h>
 
+#define MIN_BLOCK_AREA 100
+#define BLOCK_SIZE(block) ((block).height * (block).width)
+
 class PixyViSy
 {
   public:
