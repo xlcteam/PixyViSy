@@ -6,6 +6,8 @@
 #include <stdint.h>
 
 #define MIN_BLOCK_AREA 100
+#define BALL_SIZE 12
+#define PIXY_SCREEN_HALF 160
 #define BLOCK_SIZE(block) ((block).height * (block).width)
 
 class PixyViSy
