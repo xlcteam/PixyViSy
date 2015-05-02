@@ -30,13 +30,11 @@ void PixyViSy::update(void)
               max[2] = max[1];
               max[1] = max[0];
               max[0] = i;
-            }
-            else {
+            } else {
               max[2] = max[1];
               max[0] = i;
             }
-          }
-          else {
+          } else {
             max[2] = i;
           }
         }
