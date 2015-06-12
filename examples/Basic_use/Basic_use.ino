@@ -5,7 +5,7 @@
 
 #define SIG 1
 
-PixyViSy pixyViSy(SIG, 24*100, 10);
+PixyViSy pixyViSy(SIG, 22*100, 10);
 uint16_t distance;
 char action;
 uint32_t time, loop_count = 0;
@@ -33,6 +33,9 @@ void loop()
   Serial.print(min_time);
   Serial.print(" Max time: ");
   Serial.println(max_time);
+  Serial.print("Goal height: ");
+  Serial.print(pixyViSy.getGoalPixHeight());
+  Serial.println(" pixels");
   
   distance = pixyViSy.getDistance();
   action = pixyViSy.getAction();

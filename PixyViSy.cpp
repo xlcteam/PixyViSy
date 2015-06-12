@@ -17,7 +17,7 @@ void PixyViSy::update(void)
   right_pixels = 0;
   action = 'N'; // as "Nothing"
   distance = ~0;
-  uint16_t goal_pix_height = 0;
+  goal_pix_height = 0;
   uint8_t max[3] = { all_blocks_count, all_blocks_count, all_blocks_count };
 
   if (all_blocks_count) {
@@ -49,13 +49,13 @@ void PixyViSy::update(void)
         uint16_t left_border = pixy.blocks[max[i]].x - pixy.blocks[max[i]].width / 2;
         uint16_t right_border = pixy.blocks[max[i]].x + pixy.blocks[max[i]].width / 2;
         
-        if (right < PIXY_SCREEN_HALF) {
+        if (right_border < PIXY_SCREEN_HALF) {
           left_pixels += pixy.blocks[max[i]].width;
-        } else if (left > PIXY_SCREEN_HALF) {
+        } else if (left_border > PIXY_SCREEN_HALF) {
           right_pixels += pixy.blocks[max[i]].width;
         } else {
-          left_pixels += PIXY_SCREEN_HALF - left;
-          right_pixels += right - PIXY_SCREEN_HALF;
+          left_pixels += PIXY_SCREEN_HALF - left_border;
+          right_pixels += right_border - PIXY_SCREEN_HALF;
         }
       }
     }
