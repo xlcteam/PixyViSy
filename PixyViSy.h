@@ -3,6 +3,7 @@
 
 #include <SPI.h>
 #include <Pixy.h>
+#include <XLCPixy.h>
 #include <stdint.h>
 
 class PixyViSy
@@ -22,7 +23,7 @@ class PixyViSy
         }
         char getAction(void) { return action; }
     private:
-        Pixy pixy;
+        XLCPixy<LinkSPI> pixy;
         uint8_t blocks_count;
         uint8_t signature;
         uint8_t left_pixels;
