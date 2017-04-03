@@ -13,7 +13,7 @@ class PixyViSy
         uint16_t getDistance(void) { return distance; }
         uint8_t getRightPixels(void) { return right_pixels; }
         uint8_t getLeftPixels(void) { return left_pixels; }
-        uint8_t getBlocksCount(void) { return blocks_count; }
+        uint16_t getBlocksCount(void) { return blocks_count; }
         uint8_t getGoalPixHeight(void) { return goal_pix_height; }
         void setSignature(uint8_t sig) { signature = sig; }
         void setGoalHeight(uint8_t _goal_height) { goal_height = _goal_height;}
@@ -22,8 +22,9 @@ class PixyViSy
         }
         char getAction(void) { return action; }
     private:
+        void findNMax(uint8_t sig, uint16_t n, uint16_t *out_blocks);
         Pixy pixy;
-        uint8_t blocks_count;
+        uint16_t blocks_count;
         uint8_t signature;
         uint8_t left_pixels;
         uint8_t right_pixels;
