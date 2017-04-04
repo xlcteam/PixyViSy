@@ -5,7 +5,7 @@
 
 #define SIG 1
 
-PixyViSy pixyViSy(SIG, 22*100, 10);
+PixyViSy pixyViSy(SIG, 237, 266, 10);
 uint16_t distance;
 char action;
 uint32_t time, loop_count = 0;
