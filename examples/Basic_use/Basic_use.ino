@@ -5,7 +5,7 @@
 
 #define SIG 1
 
-PixyViSy pixyViSy(SIG, 237, 266, 10);
+PixyViSy pixyViSy(266, 237, SIG, 10, 100, 8);
 uint16_t distance;
 char action;
 uint32_t time, loop_count = 0;
@@ -37,8 +37,8 @@ void loop()
     Serial.print(pixyViSy.getGoalPixHeight());
     Serial.println(" pixels");
 
-    distance = pixyViSy.getDistance();
-    action = pixyViSy.getAction();
+    distance = pixyViSy.getGoalDist();
+    action = pixyViSy.getGoalAction();
     if (distance == ~0) {
         Serial.print("No object(signature: ");
         Serial.print(SIG);
