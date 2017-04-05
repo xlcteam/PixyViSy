@@ -29,6 +29,19 @@ PixyViSy::PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy, uint8_t _goal_sig,
     setDefValues();
 }
 
+void PixyViSy::printParams()
+{
+    Serial.print("Fyp: ");           Serial.println(Fyp);
+    Serial.print("Fxp: ");           Serial.println(Fxp);
+    Serial.print("process_flag: ");  Serial.println(process_flag, BIN);
+    Serial.print("goal_sig: ");      Serial.println(goal_sig);
+    Serial.print("goal_height: ");   Serial.println(goal_height);
+    Serial.print("ball_size: ");     Serial.println(ball_size);
+    Serial.print("min_goal_size: "); Serial.println(min_goal_size);
+    Serial.print("ball_sig: ");      Serial.println(ball_sig);
+    Serial.print("min_ball_size: "); Serial.println(min_ball_size);
+}
+
 void PixyViSy::update(void)
 {
     setDefValues();
