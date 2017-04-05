@@ -3,10 +3,24 @@
 #include <Pixy.h>
 #include <stdint.h>
 
-#define SIG 1
+#define FOC_LEN_X 266
+#define FOC_LEN_Y 237
 
-PixyViSy pixyViSy(266, 237, SIG, 10, 100, 8);
-uint16_t distance;
+#define GOAL_SIG 1
+#define BALL_SIG 2
+
+#define GOAL_HEIGHT 10
+#define BALL_DIAMETER 7
+
+#define MIN_GOAL_SIZE 100
+#define MIN_BALL_SIZE 0
+
+PixyViSy pixyViSy(FOC_LEN_X, FOC_LEN_Y,
+                  GOAL_SIG, GOAL_HEIGHT, MIN_GOAL_SIZE,
+                  BALL_DIAMETER, BALL_SIG, MIN_BALL_SIZE,
+                  PIXYVISY_GOAL | PIXYVISY_BALL);
+uint16_t goal_distance, ball_distance;
+int8_t ball_angle;
 char action;
 uint32_t time, loop_count = 0;
 uint16_t min_time = ~0, max_time = 0, average_time = 0;
@@ -37,16 +51,19 @@ void loop()
     Serial.print(pixyViSy.getGoalPixHeight());
     Serial.println(" pixels");
 
-    distance = pixyViSy.getGoalDist();
+    goal_distance = pixyViSy.getGoalDist();
     action = pixyViSy.getGoalAction();
-    if (distance == ~0) {
+    ball_distance = pixyViSy.getBallDist();
+    ball_angle = pixyViSy.getBallAngle();
+    Serial.println("GOAL");
+    if (goal_distance == ~0) {
         Serial.print("No object(signature: ");
-        Serial.print(SIG);
+        Serial.print(GOAL_SIG);
         Serial.println(") in front of camera");
     }
     else {
         Serial.print("Distance: ");
-        Serial.print(distance);
+        Serial.print(goal_distance);
         Serial.print("cm Suggested action: ");
         switch (action) {
             case 'K': {
@@ -66,6 +83,19 @@ void loop()
                 break;
             }
         }
+    }
+    Serial.println("BALL");
+    if (ball_distance == ~0) {
+        Serial.print("No object(signature: ");
+        Serial.print(BALL_SIG);
+        Serial.println(") in front of camera");
+    }
+    else {
+        Serial.print("Distance: ");
+        Serial.print(ball_distance);
+        Serial.print("cm Angle: ");
+        Serial.print(ball_angle);
+        Serial.println(" degrees");
     }
     Serial.println();
     delay(100);

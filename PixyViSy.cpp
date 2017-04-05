@@ -1,4 +1,5 @@
 #include <PixyViSy.h>
+#include <math.h>
 
 const int16_t h_center = (PIXY_MAX_X +  1) / 2;
 const int16_t v_center = (PIXY_MAX_Y +  1) / 2;
@@ -9,14 +10,21 @@ inline uint16_t block_size(Block& block)
 }
 
 PixyViSy::PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy, uint8_t _goal_sig,
-    uint8_t _goal_height, uint16_t min_goal_size, uint8_t ball_size)
+    uint8_t _goal_height, uint16_t _min_goal_size, uint8_t _ball_size,
+    uint8_t _ball_sig, uint16_t _min_ball_size, uint8_t flag)
 {
     pixy.init();
 
     Fyp = pixel_Fy;
     Fxp = pixel_Fx;
+    process_flag = flag;
+
     goal_sig = _goal_sig;
     goal_height = _goal_height;
+    min_goal_size = _min_goal_size;
+    ball_size = _ball_size;
+    ball_sig = _ball_sig;
+    min_ball_size = _min_ball_size;
 
     setDefValues();
 }
@@ -30,7 +38,27 @@ void PixyViSy::update(void)
         return;
     }
 
-    processGoal();
+    if (process_flag & PIXYVISY_GOAL) {
+        processGoal();
+    }
+    if (process_flag & PIXYVISY_BALL) {
+        processBall();
+    }
+}
+
+void PixyViSy::processBall()
+{
+    uint16_t ball_i;
+    if (findNMax(ball_sig, 1, &ball_i, min_ball_size) == 0) {
+        return;
+    }
+    Block& ball = pixy.blocks[ball_i];
+    if (ball.width > ball.height) {
+        ball_dist = getRealZ(ball_size, ball.width, 'X');
+    } else {
+        ball_dist = getRealZ(ball_size, ball.height, 'Y');
+    }
+    ball_angle = getAngleH(ball.x);
 }
 
 void PixyViSy::processGoal()
@@ -95,6 +123,8 @@ void PixyViSy::setDefValues()
     goal_pix_height = 0;
     goal_action = 'N'; // as "Nothing"
     goal_dist = ~0;
+    ball_dist = ~0;
+    ball_angle = 0;
 }
 
 // puts indexes of blocks from the biggest to the smallest to out_blocks
@@ -143,6 +173,16 @@ inline int16_t PixyViSy::getPixX(int16_t X, int16_t Z)
 inline int16_t PixyViSy::getPixY(int16_t Y, int16_t Z)
 {
     return v_center - Y * Fyp / Z;
+}
+
+inline int16_t PixyViSy::getAngleH(int16_t Xp)
+{
+    return RAD_TO_DEG * atan2(Xp - h_center, Fxp);
+}
+
+inline int16_t PixyViSy::getAngleV(int16_t Yp)
+{
+    return RAD_TO_DEG * atan2(Yp - h_center, Fyp);
 }
 
 /* vim: set tabstop=4 softtabstop=4 shiftwidth=4 expandtab : */
