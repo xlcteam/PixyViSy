@@ -38,6 +38,7 @@ class PixyViSy
         void setBallSig(uint8_t _ball_sig) { ball_sig = _ball_sig; }
         void setMinBallSize(uint16_t _min_ball_size)
             { min_ball_size = _min_ball_size; }
+        void setFlag(uint8_t flag) { process_flag = flag; }
 
     private:
         uint16_t findNMax(uint8_t sig, uint16_t n, uint16_t *out_blocks,
