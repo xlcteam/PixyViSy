@@ -1,6 +1,7 @@
 #include <PixyViSy.h>
 #include <SPI.h>
 #include <Pixy.h>
+#include <XLCPixy.h>
 #include <stdint.h>
 
 #define SIG 1
