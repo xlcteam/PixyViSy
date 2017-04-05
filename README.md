@@ -18,3 +18,6 @@ the `git` application installed:
         ~/sketchbook/libraries/$ git clone --depth 1 git@github.com:xlcteam/PixyViSy.git
 
 
+You also need to download these libraries:
+    * [http://cmucam.org/projects/cmucam5/wiki/Latest_release](http://cmucam.org/projects/cmucam5/wiki/Latest_release)
+    * [https://github.com/xlcteam/XLCPixy](https://github.com/xlcteam/XLCPixy)

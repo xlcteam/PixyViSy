@@ -3,6 +3,7 @@
 
 #include <SPI.h>
 #include <Pixy.h>
+#include <XLCPixy.h>
 #include <stdint.h>
 
 #define PIXYVISY_GOAL B00000001
@@ -52,7 +53,7 @@ class PixyViSy
         inline int16_t getAngleH(int16_t Xp);
         inline int16_t getAngleV(int16_t Yp);
 
-        Pixy pixy;
+        XLCPixy<LinkSPI> pixy;
         int16_t Fyp; // vertical focal length in pixels
         int16_t Fxp; // horizontal focal length in pixels
         uint8_t process_flag;
