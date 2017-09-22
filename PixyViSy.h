@@ -12,9 +12,7 @@
 class PixyViSy
 {
     public:
-        PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy, uint8_t _goal_sig,
-            uint8_t _goal_height, uint16_t _min_goal_size, uint8_t _ball_size,
-            uint8_t _ball_sig, uint16_t _min_ball_size, uint8_t flag);
+        PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy, uint8_t flag);
         void update(void);
 
         uint16_t getGoalDist(void) { return goal_dist; }
@@ -32,12 +30,12 @@ class PixyViSy
             if (pixel_Fy != 0) Fyp = pixel_Fy; }
         void setPixelFx(uint16_t pixel_Fx) {
             if (pixel_Fx != 0) Fxp = pixel_Fx; }
-        void setMinGoalSize(uint16_t _min_goal_size) {
-            min_goal_size = _min_goal_size; }
+        void setMinGoalArea(uint16_t _min_goal_area) {
+            min_goal_area = _min_goal_area; }
         void setBallSize(uint8_t _ball_size) { ball_size = _ball_size; }
         void setBallSig(uint8_t _ball_sig) { ball_sig = _ball_sig; }
-        void setMinBallSize(uint16_t _min_ball_size)
-            { min_ball_size = _min_ball_size; }
+        void setMinBallArea(uint16_t _min_ball_area)
+            { min_ball_area = _min_ball_area; }
         void setFlag(uint8_t flag) { process_flag = flag; }
 
         void printParams();
@@ -62,10 +60,10 @@ class PixyViSy
         uint8_t process_flag;
         uint8_t goal_sig;
         uint8_t goal_height;
-        uint8_t ball_size;
-        uint16_t min_goal_size;
+        uint16_t min_goal_area;
         uint8_t ball_sig;
-        uint16_t min_ball_size;
+        uint8_t ball_size;
+        uint16_t min_ball_area;
 
         uint16_t blocks_count;
         uint8_t goal_left_pixels;
