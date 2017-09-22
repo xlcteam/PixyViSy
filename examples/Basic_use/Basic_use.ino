@@ -10,16 +10,9 @@
 #define GOAL_SIG 1
 #define BALL_SIG 2
 
-#define GOAL_HEIGHT 10
-#define BALL_DIAMETER 7
+#define MIN_GOAL_AREA 100
 
-#define MIN_GOAL_SIZE 100
-#define MIN_BALL_SIZE 0
-
-PixyViSy pixyViSy(FOC_LEN_X, FOC_LEN_Y,
-                  GOAL_SIG, GOAL_HEIGHT, MIN_GOAL_SIZE,
-                  BALL_DIAMETER, BALL_SIG, MIN_BALL_SIZE,
-                  PIXYVISY_GOAL | PIXYVISY_BALL);
+PixyViSy pixyViSy(FOC_LEN_X, FOC_LEN_Y, PIXYVISY_GOAL | PIXYVISY_BALL);
 uint16_t goal_distance, ball_distance;
 int8_t ball_angle;
 char action;
@@ -29,7 +22,12 @@ uint16_t min_time = ~0, max_time = 0, average_time = 0;
 void setup()
 {
     Serial.begin(9600);
+    pixyViSy.setGoalSig(GOAL_SIG);
+    pixyViSy.setBallSig(BALL_SIG);
+    pixyViSy.setMinGoalArea(MIN_GOAL_AREA);
+    /* You can also set another custom preferences (e.g. setBallSize) */
 }
+
 void loop()
 {
     time = (uint32_t)micros();
