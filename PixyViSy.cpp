@@ -67,6 +67,7 @@ void PixyViSy::processBall()
         return;
     }
     Block& ball = pixy.blocks[ball_i];
+    /* prevent covered ball (e.g. by robot) */
     if (ball.width > ball.height) {
         ball_dist = getRealZ(ball_size, ball.width, 'X');
     } else {
@@ -84,13 +85,13 @@ void PixyViSy::processGoal()
         return;
     }
 
-    // counting left_pixels, right_pixels, goal_pix_height
+    /* counting left_pixels, right_pixels, goal_pix_height */
     for (uint8_t i = 0; i < goal_blocks_count; i++) {
         Block& block = pixy.blocks[max[i]];
 
         goal_pix_height += block.height;
 
-        // x coordinates of block's borders
+        /* x coordinates of block's borders */
         uint16_t left_border = block.x - block.width / 2;
         uint16_t right_border = block.x + block.width / 2;
 
@@ -141,7 +142,6 @@ void PixyViSy::setDefValues()
     ball_angle = 0;
 }
 
-// puts indexes of blocks from the biggest to the smallest to out_blocks
 uint16_t PixyViSy::findNMax(uint8_t sig, uint16_t n, uint16_t *out_blocks,
     uint16_t thresh)
 {
@@ -169,7 +169,6 @@ inline int16_t PixyViSy::getRealY(int16_t Yp, int16_t Z)
     return (v_center - Yp) * Z / Fyp;
 }
 
-// D - delta between two points in reality (Dp in image)
 inline int16_t PixyViSy::getRealZ(int16_t D, int16_t Dp, char axis)
 {
     if (axis == 'x' || axis == 'X' || axis == 'h' || axis == 'H') {
@@ -189,6 +188,7 @@ inline int16_t PixyViSy::getPixY(int16_t Y, int16_t Z)
     return v_center - Y * Fyp / Z;
 }
 
+/* Note that atan is not as slow as other goniometric functions */
 inline int16_t PixyViSy::getAngleH(int16_t Xp)
 {
     return RAD_TO_DEG * atan2(Xp - h_center, Fxp);
