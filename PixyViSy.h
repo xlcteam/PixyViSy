@@ -28,7 +28,7 @@ class PixyViSy
         uint8_t getGoalPixHeight(void) { return goal_pix_height; }
         char getGoalAction(void) { return goal_action; }
         uint16_t getBallDist(void) { return ball_dist; }
-        uint16_t getBallAngle(void) { return ball_angle; }
+        int16_t getBallAngle(void) { return ball_angle; }
 
         /* Functions used to set/change all parameters */
         void setGoalSig(uint8_t sig) { goal_sig = sig; }
@@ -87,7 +87,7 @@ class PixyViSy
         char goal_action;
         uint16_t goal_dist;
         uint16_t ball_dist;
-        int8_t ball_angle;
+        int16_t ball_angle;
 };
 
 #endif /* _PIXYVISY_H */
