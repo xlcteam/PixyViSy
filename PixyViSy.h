@@ -8,17 +8,23 @@
 
 #define PIXYVISY_GOAL B00000001
 #define PIXYVISY_BALL B00000010
+#define PIXYVISY_TEAM B00000100
+
+#define PIXYVISY_NOBLOCK (~(uint16_t)0)
 
 class PixyViSy
 {
     public:
         /* "pixel_Fx"/"Fy" are intrinsic parameters and "flag" determines
            what will be processed in "update" function - there are three
-           options: PIXYVISY_GOAL, PIXYVISY_BALL, for both at the same time
-           use PIXYVISY_GOAL | PIXYVISY_BALL. Further information in README.
+           options that can be combined by bitwise or '|':
+           PIXYVISY_GOAL
+           PIXYVISY_BALL
+           PIXYVISY_TEAM - teammate robot
+           Further information in README.
         */
-        PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy, uint8_t flag);
-        void update(void);
+        PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy);
+        void update(uint8_t flag);
 
         /* Getters to obtain data computed in last "update" function call */
         uint16_t getGoalDist(void) { return goal_dist; }
@@ -29,9 +35,12 @@ class PixyViSy
         char getGoalAction(void) { return goal_action; }
         uint16_t getBallDist(void) { return ball_dist; }
         int16_t getBallAngle(void) { return ball_angle; }
+        uint16_t getTeamDist(void) { return team_dist; }
+        int16_t getTeamAngle(void) { return team_angle; }
+        int16_t getTeamDx(void) { return team_dx; }
 
         /* Functions used to set/change all parameters */
-        void setGoalSig(uint8_t sig) { goal_sig = sig; }
+        void setGoalSig(uint16_t sig) { goal_sig = sig; }
         void setGoalHeight(uint8_t _goal_height) { goal_height = _goal_height;}
         void setPixelFy(uint16_t pixel_Fy) {
             if (pixel_Fy != 0) Fyp = pixel_Fy; }
@@ -40,10 +49,13 @@ class PixyViSy
         void setMinGoalArea(uint16_t _min_goal_area) {
             min_goal_area = _min_goal_area; }
         void setBallSize(uint8_t _ball_size) { ball_size = _ball_size; }
-        void setBallSig(uint8_t _ball_sig) { ball_sig = _ball_sig; }
+        void setBallSig(uint16_t _ball_sig) { ball_sig = _ball_sig; }
         void setMinBallArea(uint16_t _min_ball_area)
             { min_ball_area = _min_ball_area; }
-        void setFlag(uint8_t flag) { process_flag = flag; }
+        void setTeamSize(uint8_t _team_size) { team_size = _team_size; }
+        void setTeamSig(uint16_t _team_sig) { team_sig = _team_sig; }
+        void setMinTeamArea(uint16_t _min_team_area)
+            { min_team_area = _min_team_area; }
 
         /* Prints parameters using Serial */
         void printParams();
@@ -56,6 +68,7 @@ class PixyViSy
         void setDefValues();
         void processGoal();
         void processBall();
+        void processTeam();
 
         /* Attention: X, Y, D, Z should not exceed cca 100 (2**15 / Fp) */
         inline int16_t getRealX(int16_t Xp, int16_t Z);
@@ -72,13 +85,15 @@ class PixyViSy
         XLCPixy<LinkSPI> pixy;
         int16_t Fyp; /* vertical focal length in pixels */
         int16_t Fxp; /* horizontal focal length in pixels */
-        uint8_t process_flag;
-        uint8_t goal_sig;
+        uint16_t goal_sig;
         uint8_t goal_height;
         uint16_t min_goal_area;
-        uint8_t ball_sig;
+        uint16_t ball_sig;
         uint8_t ball_size;
         uint16_t min_ball_area;
+        uint16_t team_sig;
+        uint8_t team_size;
+        uint16_t min_team_area;
 
         uint16_t blocks_count;
         uint8_t goal_left_pixels;
@@ -88,6 +103,9 @@ class PixyViSy
         uint16_t goal_dist;
         uint16_t ball_dist;
         int16_t ball_angle;
+        uint16_t team_dist;
+        int16_t team_angle;
+        int16_t team_dx;
 };
 
 #endif /* _PIXYVISY_H */
