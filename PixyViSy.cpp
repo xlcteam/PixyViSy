@@ -12,17 +12,15 @@ inline uint16_t block_area(Block& block)
     return block.height * block.width;
 }
 
-PixyViSy::PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy, uint8_t flag)
+PixyViSy::PixyViSy(uint16_t pixel_Fx, uint16_t pixel_Fy)
 {
     pixy.init();
 
     Fyp = pixel_Fy;
     Fxp = pixel_Fx;
-    process_flag = flag;
 
     goal_height = def_goal_height;
     ball_size = def_IR_ball_size;
-    if (flag & PIXYVISY_BALL) ball_size = def_orange_ball_size;
 
     ball_sig = goal_sig = 0;
     min_ball_area = min_goal_area = 0;
@@ -34,7 +32,6 @@ void PixyViSy::printParams()
 {
     Serial.print("Fyp: ");           Serial.println(Fyp);
     Serial.print("Fxp: ");           Serial.println(Fxp);
-    Serial.print("process_flag: ");  Serial.println(process_flag, BIN);
     Serial.print("goal_sig: ");      Serial.println(goal_sig);
     Serial.print("goal_height: ");   Serial.println(goal_height);
     Serial.print("ball_size: ");     Serial.println(ball_size);
@@ -43,7 +40,7 @@ void PixyViSy::printParams()
     Serial.print("min_ball_area: "); Serial.println(min_ball_area);
 }
 
-void PixyViSy::update(void)
+void PixyViSy::update(uint8_t flag)
 {
     setDefValues();
     blocks_count = pixy.getBlocks();
@@ -52,11 +49,14 @@ void PixyViSy::update(void)
         return;
     }
 
-    if (process_flag & PIXYVISY_GOAL) {
+    if (flag & PIXYVISY_GOAL) {
         processGoal();
     }
-    if (process_flag & PIXYVISY_BALL) {
+    if (flag & PIXYVISY_BALL) {
         processBall();
+    }
+    if (flag & PIXYVISY_TEAM) {
+        processTeam();
     }
 }
 
@@ -130,6 +130,18 @@ void PixyViSy::processGoal()
     }
 }
 
+void PixyViSy::processTeam()
+{
+    uint16_t team_i;
+    if (findNMax(team_sig, 1, &team_i, min_team_area) == 0) {
+        return;
+    }
+    Block& team = pixy.blocks[team_i];
+    team_dist = getRealZ(team_size, team.height, 'Y');
+    team_angle = getAngleH(team.x);
+    team_dx = getRealX(team.x, team_dist);
+}
+
 void PixyViSy::setDefValues()
 {
     blocks_count = 0;
@@ -137,9 +149,12 @@ void PixyViSy::setDefValues()
     goal_right_pixels = 0;
     goal_pix_height = 0;
     goal_action = 'N'; // as "Nothing"
-    goal_dist = ~0;
-    ball_dist = ~0;
+    goal_dist = PIXYVISY_NOBLOCK;
+    ball_dist = PIXYVISY_NOBLOCK;
     ball_angle = 0;
+    team_dist = PIXYVISY_NOBLOCK;
+    team_angle = 0;
+    team_dx = 0;
 }
 
 uint16_t PixyViSy::findNMax(uint8_t sig, uint16_t n, uint16_t *out_blocks,

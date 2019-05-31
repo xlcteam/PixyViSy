@@ -47,3 +47,7 @@ Main function is divided into two independent parts:
   all blob's heights). The resulting action depends on whether kicked ball
   (straight kick is supposed) will fit to any blob. If not, the action is
   rotating to side with more sumed up goal pixels.
+* **Processing teammate**
+  The biggest blob of defined signature and minimal area is taken into account.
+  Then distance, difference in the x axis and angle are computed using
+  the model.

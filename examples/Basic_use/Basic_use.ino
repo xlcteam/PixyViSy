@@ -12,9 +12,9 @@
 
 #define MIN_GOAL_AREA 100
 
-PixyViSy pixyViSy(FOC_LEN_X, FOC_LEN_Y, PIXYVISY_GOAL | PIXYVISY_BALL);
+PixyViSy pixyViSy(FOC_LEN_X, FOC_LEN_Y);
 uint16_t goal_distance, ball_distance;
-int8_t ball_angle;
+int16_t ball_angle;
 char action;
 uint32_t time, loop_count = 0;
 uint16_t min_time = ~0, max_time = 0, average_time = 0;
@@ -31,7 +31,7 @@ void setup()
 void loop()
 {
     time = (uint32_t)micros();
-    pixyViSy.update();
+    pixyViSy.update(PIXYVISY_GOAL | PIXYVISY_BALL);
     time = (uint32_t)micros() - time;
     if (time < min_time) {
         min_time = time;
@@ -55,7 +55,7 @@ void loop()
     ball_distance = pixyViSy.getBallDist();
     ball_angle = pixyViSy.getBallAngle();
     Serial.println("GOAL");
-    if (goal_distance == ~0) {
+    if (goal_distance == PIXYVISY_NOBLOCK) {
         Serial.print("No object(signature: ");
         Serial.print(GOAL_SIG);
         Serial.println(") in front of camera");
@@ -84,7 +84,7 @@ void loop()
         }
     }
     Serial.println("BALL");
-    if (ball_distance == ~0) {
+    if (ball_distance == PIXYVISY_NOBLOCK) {
         Serial.print("No object(signature: ");
         Serial.print(BALL_SIG);
         Serial.println(") in front of camera");
