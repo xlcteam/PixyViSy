@@ -34,10 +34,13 @@ void PixyViSy::printParams()
     Serial.print("Fxp: ");           Serial.println(Fxp);
     Serial.print("goal_sig: ");      Serial.println(goal_sig);
     Serial.print("goal_height: ");   Serial.println(goal_height);
-    Serial.print("ball_size: ");     Serial.println(ball_size);
+    Serial.print("goal_angle: ");    Serial.println(goal_angle);
     Serial.print("min_goal_area: "); Serial.println(min_goal_area);
     Serial.print("ball_sig: ");      Serial.println(ball_sig);
+    Serial.print("ball_size: ");     Serial.println(ball_size);
     Serial.print("min_ball_area: "); Serial.println(min_ball_area);
+    Serial.print("teammate_sig: ");  Serial.println(team_sig);
+    Serial.print("teammate_angle: ");Serial.println(team_angle);
 }
 
 void PixyViSy::update(uint8_t flag)
@@ -50,7 +53,7 @@ void PixyViSy::update(uint8_t flag)
     }
 
     if (flag & PIXYVISY_GOAL) {
-        processGoal();
+        processGoal(flag & PIXYVISY_ANGG);
     }
     if (flag & PIXYVISY_BALL) {
         processBall();
@@ -76,7 +79,23 @@ void PixyViSy::processBall()
     ball_angle = getAngleH(ball.x);
 }
 
-void PixyViSy::processGoal()
+uint16_t PixyViSy::valueGoalBlock(Block& block, int16_t Z)
+{
+    uint16_t value = 0;
+    if (block.x > h_center) {
+        value = 100 * block.width / (block.x - h_center);
+    } else if (block.x < h_center) {
+        value = 100 * block.width / (h_center - block.x);
+    } else {
+        value = 100 * block.width * 2;
+    }
+    if (getRealX(block.width, Z) > ball_size) {
+        value *= 4;
+    }
+    return value;
+}
+
+void PixyViSy::processGoal(bool set_angle)
 {
     uint16_t max[3];
     uint8_t goal_blocks_count = findNMax(goal_sig, 3, max, min_goal_area);
@@ -85,24 +104,10 @@ void PixyViSy::processGoal()
         return;
     }
 
-    /* counting left_pixels, right_pixels, goal_pix_height */
+    /* counting goal_pix_height */
     for (uint8_t i = 0; i < goal_blocks_count; i++) {
         Block& block = pixy.blocks[max[i]];
-
         goal_pix_height += block.height;
-
-        /* x coordinates of block's borders */
-        uint16_t left_border = block.x - block.width / 2;
-        uint16_t right_border = block.x + block.width / 2;
-
-        if (right_border < h_center) {
-            goal_left_pixels += block.width;
-        } else if (left_border > h_center) {
-            goal_right_pixels += block.width;
-        } else {
-            goal_left_pixels += h_center - left_border;
-            goal_right_pixels += right_border - h_center;
-        }
     }
     // counting distance and suggesting action
     goal_pix_height /= goal_blocks_count; // average value
@@ -112,6 +117,8 @@ void PixyViSy::processGoal()
     int16_t ball_left = getPixX(-ball_size/2, goal_dist);
     int16_t ball_right = getPixX(ball_size/2, goal_dist);
 
+    Block& best = pixy.blocks[max[0]];
+    uint16_t best_val = valueGoalBlock(best, goal_dist);
     for (uint8_t i = 0; i < goal_blocks_count; i++) {
         Block& block = pixy.blocks[max[i]];
         // x coordinates of goal_block's borders
@@ -120,13 +127,25 @@ void PixyViSy::processGoal()
 
         if (goal_left <= ball_left && goal_right >= ball_right) {
             goal_action = 'K'; // as "Kick"
+            if (set_angle) {
+                goal_angle = getAngleH(block.x);
+            }
             return;
         }
+
+        uint16_t block_val = valueGoalBlock(block, goal_dist);
+        if (block_val > best_val) {
+            best = block;
+            best_val = block_val;
+        }
     }
-    if (goal_left_pixels > goal_right_pixels) {
+    if (best.x < h_center) {
         goal_action = 'L'; // as "move Left"
     } else {
         goal_action = 'R'; // as "move Right"
+    }
+    if (set_angle) {
+        goal_angle = getAngleH(best.x);
     }
 }
 
@@ -145,11 +164,10 @@ void PixyViSy::processTeam()
 void PixyViSy::setDefValues()
 {
     blocks_count = 0;
-    goal_left_pixels = 0;
-    goal_right_pixels = 0;
     goal_pix_height = 0;
     goal_action = 'N'; // as "Nothing"
     goal_dist = PIXYVISY_NOBLOCK;
+    goal_angle = 0;
     ball_dist = PIXYVISY_NOBLOCK;
     ball_angle = 0;
     team_dist = PIXYVISY_NOBLOCK;

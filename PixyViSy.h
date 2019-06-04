@@ -7,8 +7,9 @@
 #include <stdint.h>
 
 #define PIXYVISY_GOAL B00000001
-#define PIXYVISY_BALL B00000010
-#define PIXYVISY_TEAM B00000100
+#define PIXYVISY_ANGG B00000010
+#define PIXYVISY_BALL B00000100
+#define PIXYVISY_TEAM B00001000
 
 #define PIXYVISY_NOBLOCK (~(uint16_t)0)
 
@@ -19,6 +20,7 @@ class PixyViSy
            what will be processed in "update" function - there are three
            options that can be combined by bitwise or '|':
            PIXYVISY_GOAL
+           PIXIVISY_ANGG - angle to the goal
            PIXYVISY_BALL
            PIXYVISY_TEAM - teammate robot
            Further information in README.
@@ -28,11 +30,10 @@ class PixyViSy
 
         /* Getters to obtain data computed in last "update" function call */
         uint16_t getGoalDist(void) { return goal_dist; }
-        uint8_t getGoalRightPixels(void) { return goal_right_pixels; }
-        uint8_t getGoalLeftPixels(void) { return goal_left_pixels; }
         uint16_t getBlocksCount(void) { return blocks_count; }
         uint8_t getGoalPixHeight(void) { return goal_pix_height; }
         char getGoalAction(void) { return goal_action; }
+        int16_t getGoalAngle(void) { return goal_angle; }
         uint16_t getBallDist(void) { return ball_dist; }
         int16_t getBallAngle(void) { return ball_angle; }
         uint16_t getTeamDist(void) { return team_dist; }
@@ -66,7 +67,8 @@ class PixyViSy
         uint16_t findNMax(uint8_t sig, uint16_t n, uint16_t *out_blocks,
             uint16_t thresh);
         void setDefValues();
-        void processGoal();
+        uint16_t valueGoalBlock(Block& block, int16_t Z);
+        void processGoal(bool set_angle);
         void processBall();
         void processTeam();
 
@@ -96,11 +98,10 @@ class PixyViSy
         uint16_t min_team_area;
 
         uint16_t blocks_count;
-        uint8_t goal_left_pixels;
-        uint8_t goal_right_pixels;
         uint8_t goal_pix_height;
         char goal_action;
         uint16_t goal_dist;
+        int16_t goal_angle;
         uint16_t ball_dist;
         int16_t ball_angle;
         uint16_t team_dist;
