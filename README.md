@@ -18,25 +18,25 @@ the `git` application installed:
         ~/sketchbook/libraries/$ git clone --depth 1 git@github.com:xlcteam/PixyViSy.git
 
 
-You also need to download these libraries:
-    * [http://cmucam.org/projects/cmucam5/wiki/Latest_release](http://cmucam.org/projects/cmucam5/wiki/Latest_release)
-    * [https://github.com/xlcteam/XLCPixy](https://github.com/xlcteam/XLCPixy)
+You also need to download and install these Arduino libraries:
+ * [Pixy](https://pixycam.com/downloads-pixy1/)
+ * [XLCPixy](https://github.com/xlcteam/XLCPixy)
 
 
 Model
 -----
 
-We use pinhole camera model and two intrinsic parameters representing focal
+We use the pinhole camera model and two intrinsic parameters representing focal
 length in terms of pixel for each axis. See
-[https://en.wikipedia.org/wiki/Pinhole_camera_model](https://en.wikipedia.org/wiki/Pinhole_camera_model)
-and [https://en.wikipedia.org/wiki/Camera_resectioning](https://en.wikipedia.org/wiki/Camera_resectioning).
+[Pinhole camera model](https://en.wikipedia.org/wiki/Pinhole_camera_model)
+and [Camera resectioning](https://en.wikipedia.org/wiki/Camera_resectioning).
 The *Calibration* example should be used to determine intrinsic parameters.
 
 
 Algorithm
 ---------
 
-Main function is divided into two independent parts:
+Main function is divided into three independent parts:
 * **Processing ball**
   The biggest blob of defined signature and minimal area is taken into account.
   Then distance and angle are computed using the model.
